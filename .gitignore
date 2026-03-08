@@ -1,5 +1,10 @@
 # Prerequisites
 *.d
+*.bin
+*.img
+*.gcm
+*.exe
+*.bat
 
 # Object files
 *.o
