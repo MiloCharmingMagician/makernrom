@@ -5,6 +5,9 @@
 *.gcm
 *.exe
 *.bat
+*.suo
+*.vcproj.DESKTOP-63O5AIK.admin.user
+*.ncb
 
 # Object files
 *.o
