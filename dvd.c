@@ -35,3 +35,38 @@ const u32 edc_table[256] = {
 0x460F7B1B,0x31080B8D,0xA8015A37,0xDF062AA1,0x4F883230,0x388F42A6,0xA186131C,0xD681638A,
 0x0C977033,0x7B9000A5,0xE299511F,0x959E2189,0x05103918,0x7217498E,0xEB1E1834,0x9C1968A2
 };
+
+/* ------------------------------------------------------ */
+/* EDC / IED calculation */
+/* ------------------------------------------------------ */
+u32 CalculateEDC(const u8 *data, u32 len)
+{
+    u32 crc = 0;
+    u32 i;
+    for (i = 0; i < len; i++)
+        crc = edc_table[(crc ^ data[i]) & 0xFF] ^ (crc >> 8);
+    return crc;
+}
+
+u16 CalculateIED(u32 psn)
+{
+    u8 buf[4];
+    u16 crc = 0;
+    int i, j;
+    buf[0] = (u8)(psn >> 24);
+    buf[1] = (u8)(psn >> 16);
+    buf[2] = (u8)(psn >> 8);
+    buf[3] = (u8)psn;
+    for (i = 0; i < 4; i++)
+    {
+        crc ^= ((u16)buf[i] << 8);
+        for (j = 0; j < 8; j++)
+        {
+            if (crc & 0x8000)
+                crc = (crc << 1) ^ 0x1021;
+            else
+                crc <<= 1;
+        }
+    }
+    return crc;
+}

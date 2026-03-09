@@ -6,6 +6,8 @@
 #define BCA_SIZE 188
 
 extern const u32 edc_table[256];
+extern u32 CalculateEDC(const u8 *data, u32 len);
+extern u16 CalculateIED(u32 psn);
 
 #pragma pack(push,1)
 

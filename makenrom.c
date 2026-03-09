@@ -5,41 +5,6 @@
 #include "dvd.h"
 
 /* ------------------------------------------------------ */
-/* EDC / IED calculation */
-/* ------------------------------------------------------ */
-static u32 CalculateEDC(const u8 *data, u32 len)
-{
-    u32 crc = 0;
-    u32 i;
-    for (i = 0; i < len; i++)
-        crc = edc_table[(crc ^ data[i]) & 0xFF] ^ (crc >> 8);
-    return crc;
-}
-
-static u16 CalculateIED(u32 psn)
-{
-    u8 buf[4];
-    u16 crc = 0;
-    int i, j;
-    buf[0] = (u8)(psn >> 24);
-    buf[1] = (u8)(psn >> 16);
-    buf[2] = (u8)(psn >> 8);
-    buf[3] = (u8)psn;
-    for (i = 0; i < 4; i++)
-    {
-        crc ^= ((u16)buf[i] << 8);
-        for (j = 0; j < 8; j++)
-        {
-            if (crc & 0x8000)
-                crc = (crc << 1) ^ 0x1021;
-            else
-                crc <<= 1;
-        }
-    }
-    return crc;
-}
-
-/* ------------------------------------------------------ */
 /* Scramble table / NROM scrambling */
 /* ------------------------------------------------------ */
 static u8 scramble_table[32768];
@@ -183,11 +148,11 @@ int main(int argc, char *argv[])
     argv[2] = "test.img";
 
 #ifdef NDEBUG
-    //if (argc < 3)
-    //{
-    //    printf("Usage: makenrom input.gcm output.img\n");
-    //    return 1;
-    //}
+    if (argc < 3)
+    {
+        printf("Usage: makenrom input.gcm output.img\n");
+        return 1;
+    }
 #endif
 
     in = fopen(argv[1], "rb");
