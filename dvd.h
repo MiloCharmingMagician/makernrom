@@ -18,25 +18,35 @@ typedef struct {
     u32 endSector;         /* 0x00030000 + totalSectors - 1 */
 } DataAreaAllocation;      /* exactly 12 bytes - FIXED for correct PSN */
 
+/* Each radial mark entry */
 typedef struct {
-    u32 start;
-    u32 end;
-} PsnRegion;
+    u32 psn;        /* Physical sector number */
+    u16 bitOffset;  /* Bit offset within the sector where the mark starts */
+    u8  type;       /* Mark type (Datel style = 0xFF) */
+    u8  reserved;   /* Padding to make struct size 8 bytes */
+} BcaMarkEntry;
 
+/* Complete BCA block */
 typedef struct {
-    u8 optInfo[52];
-    u8 manufacturer[2];
-    u8 recorderDevice[2];
-    u8 bcaSerial;
-    u8 discDate[2];
-    u8 discTime[2];
-    u8 discNumber[3];
+    /* --- Manufacturing metadata (plain) --- */
+    u8  optInfo[52];       /* mastering options */
+    u8  manufacturer[2];   /* pressing plant code */
+    u8  recorderDevice[2]; /* LBR device code */
+    u8  bcaSerial;         /* disc batch serial */
+    u8  discDate[2];       /* year / month etc. */
+    u8  discTime[2];       /* hour / minute etc. */
+    u8  discNumber[3];     /* disc number in batch */
 
-    u8 key[8];
-    u8 id[4];
+    /* --- Authentication key and ID --- */
+    u8 key[8];             /* 8-byte key used by hardware check */
+    u8 id[4];              /* 4-byte disc identifier */
 
-    PsnRegion psn[6];
-} DiscBca; /* 188 */
+    /* --- Radial mark table --- */
+    BcaMarkEntry marks[6]; /* 6 radial marks used for validation */
+
+    /* --- Padding to fill 188 bytes --- */
+    u8  reserved[24];
+} DiscBca;
 
 typedef struct {
     u32 id;
