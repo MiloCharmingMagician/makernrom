@@ -220,10 +220,20 @@ int main(int argc, char *argv[])
     PhysicalFormatInfo pfi;
     DiscManufacturingInfo dmi;
 
-    in = fopen("test.gcm", "rb");
+#ifdef NDEBUG
+    if (argc < 3) {
+        printf("Usage: %s input.gcm output.img\n", argv[0]);
+        return 1;
+    }
+#else
+    argv[1] = "test.gcm";
+	argv[2] = "test.img";
+#endif
+
+    in = fopen(argv[1], "rb");
     if (!in) { perror("input"); return 1; }
 
-    out = fopen("test.img", "wb");
+    out = fopen(argv[2], "wb");
     if (!out) { perror("output"); fclose(in); return 1; }
 
     fseek(in, 0, SEEK_END);
