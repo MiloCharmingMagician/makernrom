@@ -45,7 +45,7 @@ typedef struct {
     BcaMarkEntry marks[6]; /* 6 radial marks used for validation */
 
     /* --- Padding to fill 188 bytes --- */
-    u8  reserved[24];
+    u8  reserved[64];
 } DiscBca;
 
 typedef struct {
